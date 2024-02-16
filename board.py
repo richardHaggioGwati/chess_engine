@@ -1,6 +1,7 @@
 from const import *
-from square import Square
+from square import *
 from piece import *
+from move import Move
 
 
 class Board:
@@ -17,7 +18,7 @@ class Board:
                 self.squares[row][col] = Square(row, col)
 
     def _add_pieces(self, color):
-        row_pawn, row_other = (6,7) if color == 'white' else (1, 0)
+        row_pawn, row_other = (6, 7) if color == 'white' else (1, 0)
 
         # pawns
         for col in range(COLS):
@@ -40,3 +41,48 @@ class Board:
 
         # king
         self.squares[row_other][4] = Square(row_other, 4, King(color))
+
+    def calc_moves(self, piece, row, col):
+        """'
+            Calculate valid movies for each piece
+        """
+
+        def knight_moves():
+            # 8 valid moves
+            possible_moves = [
+                (row - 2, col + 1),
+                (row - 1, col + 2),
+                (row + 1, col + 2),
+                (row + 2, col + 1),
+                (row + 2, col - 1),
+                (row + 1, col - 2),
+                (row - 1, col - 2),
+                (row - 2, col - 1),
+            ]
+            for possible_move in possible_moves:
+                possible_move_row, possible_move_col = possible_move
+
+                if Square.in_range(possible_move_row, possible_move_col):
+                    if self.squares[possible_move_row][possible_move_col].is_empty_or_rival(piece.color):
+                        initial = Square(row, col)
+                        final = Square(possible_move_row, possible_move_col)
+                        move = Move(initial, final)
+                        piece.add_moves(move)
+
+        if isinstance(piece, Pawn):
+            pass
+
+        elif isinstance(piece, Knight):
+            knight_moves()
+
+        elif isinstance(piece, Bishop):
+            pass
+
+        elif isinstance(piece, Rook):
+            pass
+
+        elif isinstance(piece, King):
+            pass
+
+        elif isinstance(piece, Queen):
+            pass
